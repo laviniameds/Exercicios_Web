@@ -7,21 +7,18 @@ package controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import model.Livro;
 
 /**
  *
  * @author lavinia
  */
-@WebServlet(name = "Biblioteca", urlPatterns = {"/Biblioteca"})
-public class Biblioteca extends HttpServlet {
+@WebServlet(name = "EnviarEmail", urlPatterns = {"/EnviarEmail"})
+public class EnviarEmail extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -32,28 +29,15 @@ public class Biblioteca extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        ArrayList<Livro> livros;
+        String para = request.getParameter("para");  
+        String assunto = request.getParameter("assunto");  
+        String msg = request.getParameter("msg");  
         
-        HttpSession sessao = request.getSession();
-        livros = (ArrayList<Livro>)sessao.getAttribute("livros");
-        
-        if(livros == null)      
-            livros = new ArrayList<>();
-        
-        Livro livro = new Livro();
-        livro.setISBN(request.getParameter("isbn"));
-        livro.setTitulo(request.getParameter("titulo"));
-        livro.setAutor(request.getParameter("autor"));
-        
-        livros.add(livro);
-        
-        sessao.setAttribute("livros", livros);
-        
-        getServletContext().getRequestDispatcher("/ListarLivros.jsp").forward(request, response);
+        Mailer.send(para, assunto, msg);
+        getServletContext().getRequestDispatcher("/Sucesso.jsp").forward(request, response);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
